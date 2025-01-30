@@ -35,25 +35,19 @@ class MyEventHandler(FileSystemEventHandler):
         with os.scandir(source_dir) as entries:
             for entry in entries:
                 name = entry.name
-                dest = source_dir
-                if name.endswith(".wav") or name.endswith(".mp3"):
-                    if (
-                        entry.stat().st_size < 25000000 or "SFX" in name
-                    ):  # Most sound effects are less than 25MB or have SFX in the name
-                        dest = dest_dir_sfx
-                    else:
-                        dest = dest_dir_music
-                    move(dest, entry, name)
-                elif name.endswith(".mov") or name.endswith(".mp4"):
+                if name.endswith((".wav", ".mp3")):
+                    dest = (
+                        dest_dir_sfx
+                        if entry.stat().st_size < 25000000 or "SFX" in name
+                        else dest_dir_music
+                    )
+                elif name.endswith((".mov", ".mp4")):
                     dest = dest_dir_videos
-                    move(dest, entry, name)
-                elif (
-                    name.endswith("jpg")
-                    or name.endswith("jpeg")
-                    or name.endswith("png")
-                ):
+                elif name.endswith((".jpg", ".jpeg", ".png")):
                     dest = dest_dir_images
-                    move(dest, entry, name)
+                else:
+                    continue
+                move(dest, entry, name)
 
 
 def main():
