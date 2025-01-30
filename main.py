@@ -11,11 +11,23 @@ dest_dir_videos = "C:/Users/gianl/OneDrive/Desktop/Videos"
 dest_dir_images = "C:/Users/gianl/OneDrive/Desktop/Images"
 
 
+def make_unique(dest, name):
+    filename, extension = os.path.splitext(name)
+    counter = 1
+    while os.path.exists(f"{dest}/{name}"):
+        name = f"{filename}({str(counter)}){extension}"
+        counter += 1
+
+    return name
+
+
 def move(dest, entry, name):
     file_exists = os.path.exists(f"{dest}/{name}")
     if file_exists:
-        os.rename(entry, name)
-    shutil.move(entry, dest)
+        unique_name = make_unique(dest, name)
+        shutil.move(entry, f"{dest}/{unique_name}")
+    else:
+        shutil.move(entry, dest)
 
 
 class MyEventHandler(FileSystemEventHandler):
